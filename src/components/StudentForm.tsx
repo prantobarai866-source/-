@@ -193,15 +193,15 @@ export const StudentForm: React.FC<StudentFormProps> = ({ profile, onChange, onR
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 p-5 md:p-7 transition-all">
-      {/* 26 Batch Announcement Header */}
-      <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-indigo-500/10 border border-indigo-200/80 dark:border-indigo-800/80 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs sm:text-sm font-bold text-indigo-900 dark:text-indigo-200">
+      {/* 26 Batch Announcement Header Matching User Screenshot */}
+      <div className="mb-5 p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 flex items-center justify-between gap-2 shadow-xs">
+        <div className="flex items-center gap-2.5">
+          <span className="w-1.5 h-4.5 rounded-full bg-emerald-500 shrink-0" />
+          <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
             এইচএসসি ২০২৬ ব্যাচ (২৬ ব্যাচ) স্পেশাল এডমিশন মোড সক্রিয়
           </span>
         </div>
-        <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-indigo-600 text-white">
+        <span className="text-xs font-medium px-3.5 py-1.5 rounded-2xl bg-[#4f46e5] hover:bg-[#4338ca] text-white shadow-xs font-sans text-center shrink-0">
           HSC 2026 Batch
         </span>
       </div>

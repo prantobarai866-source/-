@@ -14,7 +14,6 @@ import { PrintReport } from './components/PrintReport';
 import { AdmissionGuideModal } from './components/AdmissionGuideModal';
 import { ThreeCanvas } from './components/ThreeCanvas';
 import { UpcomingDeadlines } from './components/UpcomingDeadlines';
-import { EducationalAdBanner } from './components/EducationalAdBanner';
 import {
   GraduationCap,
   Moon,
@@ -146,75 +145,75 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200 relative">
+      {/* Global University Architectural Ambience Background */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.10] dark:opacity-[0.15] filter saturate-125"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=2400&q=80')`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/90 via-slate-50/75 to-slate-100/90 dark:from-slate-950/90 dark:via-slate-950/80 dark:to-slate-950/95" />
+      </div>
+
       {/* Top Floating App Bar */}
-      <header className="sticky top-0 z-40 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors">
+      <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
-          {/* Logo & Brand Title */}
+          {/* Student Profile Avatar & Brand Title */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
-              <GraduationCap className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-900 shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800">
+              <img
+                src="/assets/aistudio/1793625516789_e44048bc.jpg"
+                alt="শিক্ষার্থী প্রোফাইল"
+                className="w-full h-full object-cover object-top scale-150 -translate-y-1"
+                onError={(e) => {
+                  // Fallback to graduation cap if cropped source not ideal
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white tracking-tight">
-                  ভার্সিটি ভর্তি যোগ্যতা যাচাইকারী
-                </span>
-                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 px-2 py-0.5 rounded-full">
-                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                  সঠিক ও বিশ্বস্ত
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">
-                বুয়েট, ঢাবি, মেডিকেল, গুচ্ছ ও অন্যান্য বিশ্ববিদ্যালয়ের সর্বশেষ নিয়মানুযায়ী
-              </p>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white leading-tight">
+                ভার্সিটি ভর্তি
+              </span>
+              <span className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-tight">
+                যোগ্যতা যাচাইকারী
+              </span>
             </div>
           </div>
 
-          {/* Action buttons: Facebook Share, PDF Print, Guide, Dark mode toggle */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Action buttons: Calendar, Print, Share, Theme Toggle */}
+          <div className="flex items-center gap-2">
             {/* Deadlines Quick Toggle Button */}
             <button
               onClick={() => setActiveTab(activeTab === 'deadlines' ? 'all' : 'deadlines')}
               type="button"
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition border ${
+              className={`p-2 rounded-xl transition border shadow-xs ${
                 activeTab === 'deadlines'
-                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                  : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700/80'
+                  ? 'bg-emerald-600 text-white border-emerald-600'
+                  : 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700/80'
               }`}
               title="ভর্তি পরীক্ষার সময়সূচী ও ডেডলাইন"
             >
-              <Calendar className="w-4 h-4 text-emerald-500" />
-              <span className="hidden sm:inline">সময়সূচী</span>
-            </button>
-
-            {/* Guide Button */}
-            <button
-              onClick={() => setIsGuideModalOpen(true)}
-              type="button"
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 transition"
-              title="ভর্তি নির্দেশিকা ও নিয়মাবলী"
-            >
-              <HelpCircle className="w-4 h-4 text-indigo-500" />
-              <span>নির্দেশিকা</span>
+              <Calendar className="w-5 h-5" />
             </button>
 
             {/* Print / PDF Button */}
             <button
               onClick={() => setIsPrintReportOpen(true)}
               type="button"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 border border-indigo-200/80 dark:border-indigo-800/60 transition shadow-sm"
+              className="p-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 border border-slate-200 dark:border-slate-700/80 transition shadow-xs"
               title="পিডিএফ বা প্রিন্ট সামারি রিপোর্ট"
             >
-              <Printer className="w-4 h-4" />
-              <span className="hidden sm:inline">পিডিএফ সামারি</span>
+              <Printer className="w-5 h-5" />
             </button>
 
             {/* Facebook / Social Share Button */}
             <button
               onClick={() => setIsShareModalOpen(true)}
               type="button"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-[#1877F2] hover:bg-[#0d6eed] shadow-sm shadow-blue-500/20 transition"
+              className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl text-white bg-[#1877F2] hover:bg-[#0d6eed] shadow-sm shadow-blue-500/20 transition"
               title="ফেসবুক ও সোশ্যাল মিডিয়ায় শেয়ার করুন"
             >
               <Share2 className="w-4 h-4" />
@@ -225,82 +224,108 @@ export default function App() {
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               type="button"
-              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition"
+              className="p-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition shadow-xs"
               aria-label={isDarkMode ? 'লাইট মোড চালু করুন' : 'ডার্ক মোড চালু করুন'}
               title={isDarkMode ? 'লাইট মোড' : 'ডার্ক মোড'}
             >
               {isDarkMode ? (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-5 h-5 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 text-slate-600" />
+                <Moon className="w-5 h-5 text-slate-600" />
               )}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Hero Banner with Three.js particle canvas */}
-      <section className="relative bg-gradient-to-b from-indigo-50/70 via-slate-50 to-white dark:from-slate-900/90 dark:via-slate-950 dark:to-slate-950 pt-8 pb-10 border-b border-slate-200/60 dark:border-slate-800/80 overflow-hidden">
-        {/* Three.js Interactive Particle Constellation */}
+      {/* Hero Banner with Dhaka University Curzon Hall & Campus Landscape Background */}
+      <section className="relative overflow-hidden pt-8 pb-32 sm:pb-36 border-b border-slate-200/60 dark:border-slate-800/80">
+        {/* Full Colorful University Campus Background (Curzon Hall, Library, Lawn) */}
+        <div
+          className="absolute inset-0 bg-cover bg-bottom sm:bg-center bg-no-repeat opacity-90 dark:opacity-40 transition-opacity"
+          style={{
+            backgroundImage: `url('/campus_bg.jpg')`,
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Soft atmospheric gradient: light & transparent so campus buildings shine through */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/92 via-white/80 to-transparent dark:from-slate-950/95 dark:via-slate-950/85 dark:to-slate-950/60" />
+
+        {/* Bottom lawn fade into page background */}
+        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-slate-50 dark:from-slate-950 via-slate-50/60 dark:via-slate-950/60 to-transparent pointer-events-none" />
+
+        {/* Three.js Interactive Particle Constellation overlay */}
         <ThreeCanvas isDarkMode={isDarkMode} />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-100/90 dark:bg-indigo-950/90 text-indigo-700 dark:text-indigo-300 text-xs font-bold mb-3 border border-indigo-200 dark:border-indigo-800 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
-              এইচএসসি ২০২৬ (২৬ ব্যাচ) ও ২য় বার পরীক্ষার্থীদের হালনাগাদ সার্কুলার
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-slate-900 dark:text-white">
+          <div className="text-center">
+            {/* Top Lavender Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ede9fe]/90 dark:bg-indigo-950/80 text-[#4338ca] dark:text-indigo-200 text-xs sm:text-sm font-bold mb-3 border border-[#ddd6fe] dark:border-indigo-800 shadow-xs">
+              <Sparkles className="w-4 h-4 text-amber-500 animate-spin" style={{ animationDuration: '6s' }} />
+              এইচএসসি ২০২৬ (২৬ ব্যাচ) ও ২য় বার পরীক্ষার্থীদের হালনাগাদ সার্কুলার
             </div>
 
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+            {/* Main Headline */}
+            <h1 className="text-2xl sm:text-4xl lg:text-[42px] font-black text-slate-900 dark:text-white tracking-tight leading-tight">
               ২৬ ব্যাচ: কোন কোন বিশ্ববিদ্যালয়ে আপনি পরীক্ষা দিতে পারবেন?
             </h1>
 
-            <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-              এইচএসসি ২০২৬ সালে যারা পরীক্ষা দিয়েছে/দিচ্ছে তাদের জন্য বুয়েট, ঢাবি, মেডিকেল, গুচ্ছ ও অন্যান্য ভার্সিটির শর্তাবলী। 
-              কোনো ইউনিটে পরীক্ষা দিতে না পারলে তার <span className="text-rose-600 dark:text-rose-400 font-bold">সুনির্দিষ্ট কারণ ও নম্বর ঘাটতি</span> লাল রঙে স্পষ্টভাবে প্রদর্শিত হবে।
+            {/* Paragraph Text with Red Highlight */}
+            <p className="mt-3 text-xs sm:text-sm md:text-base text-slate-800 dark:text-slate-200 leading-relaxed max-w-2xl mx-auto font-medium">
+              এইচএসসি ২০২৬ সালে যারা পরীক্ষা দিয়েছে/দিচ্ছে তাদের জন্য বুয়েট, ঢাবি, মেডিকেল, গুচ্ছ ও অন্যান্য ভার্সিটির শর্তাবলী। 
+              কোনো ইউনিটে পরীক্ষা দিতে না পারলে তার <span className="text-[#dc2626] dark:text-rose-400 font-bold">সুনির্দিষ্ট কারণ ও নম্বর ঘাটতি</span> লাল রঙে স্পষ্টভাবে প্রদর্শিত হবে।
             </p>
 
-            {/* Quick Feature Badges */}
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs font-semibold text-slate-600 dark:text-slate-400">
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-900/80 shadow-xs border border-slate-200/80 dark:border-slate-800">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                বুয়েট ও CKRUET
-              </span>
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-900/80 shadow-xs border border-slate-200/80 dark:border-slate-800">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                মেডিকেল ও ডেন্টাল
-              </span>
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-900/80 shadow-xs border border-slate-200/80 dark:border-slate-800">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                ঢাবি, রাবি, জাবি, চবি
-              </span>
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-900/80 shadow-xs border border-slate-200/80 dark:border-slate-800">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                ২৪ জিএসটি ও কৃষি গুচ্ছ
-              </span>
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-900/80 shadow-xs border border-slate-200/80 dark:border-slate-800">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                জাতীয় ও প্রাইভেট ভার্সিটি
-              </span>
+            {/* University Feature Badges Matching Screenshot */}
+            <div className="mt-5 flex flex-col items-center gap-2.5 max-w-xl mx-auto">
+              {/* Row 1 */}
+              <div className="flex flex-wrap items-center justify-center gap-2.5 w-full">
+                <span className="flex-1 max-w-[240px] px-4 py-2 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-sm border border-slate-200/90 dark:border-slate-700/80 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+                  <span>বুয়েট ও CKRUET</span>
+                </span>
+                <span className="flex-1 max-w-[240px] px-4 py-2 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-sm border border-slate-200/90 dark:border-slate-700/80 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+                  <span>মেডিকেল ও ডেন্টাল</span>
+                </span>
+              </div>
+
+              {/* Row 2 */}
+              <div className="flex flex-wrap items-center justify-center gap-2.5 w-full">
+                <span className="flex-1 max-w-[240px] px-4 py-2 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-sm border border-slate-200/90 dark:border-slate-700/80 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+                  <span>ঢাবি, রাবি, জাবি, চবি</span>
+                </span>
+                <span className="flex-1 max-w-[240px] px-4 py-2 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-sm border border-slate-200/90 dark:border-slate-700/80 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+                  <span>২৪ জিএসটি ও কৃষি গুচ্ছ</span>
+                </span>
+              </div>
+
+              {/* Row 3 */}
+              <div className="flex items-center justify-center w-full">
+                <span className="px-5 py-2 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-sm border border-slate-200/90 dark:border-slate-700/80 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+                  <span>জাতীয় ও প্রাইভেট ভার্সিটি</span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Educational Sponsor / Ad Banner with explanation */}
-        <EducationalAdBanner />
-
-        {/* Dashboard Navigation Tabs */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-8 relative z-20 -mt-10 sm:-mt-12">
+        {/* Dashboard Navigation Tabs Matching Screenshot */}
         <div className="flex items-center justify-center">
-          <div className="inline-flex p-1 rounded-2xl bg-slate-200/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-300/60 dark:border-slate-700/60 text-xs font-bold gap-1 shadow-inner">
+          <div className="w-full max-w-xl p-1.5 rounded-2xl bg-[#e2e8f0]/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-300/60 dark:border-slate-700/60 grid grid-cols-3 gap-1 shadow-sm text-center">
             <button
               type="button"
               onClick={() => setActiveTab('all')}
-              className={`px-4 py-2 rounded-xl transition ${
+              className={`py-2 px-2 sm:px-3 rounded-xl transition font-bold text-xs sm:text-sm flex flex-col items-center justify-center ${
                 activeTab === 'all'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                  ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -309,26 +334,26 @@ export default function App() {
             <button
               type="button"
               onClick={() => setActiveTab('eligibility')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition ${
+              className={`py-2 px-2 sm:px-3 rounded-xl transition font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${
                 activeTab === 'eligibility'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                  ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-              যোগ্যতা যাচাই ({evaluationResults.filter((r) => r.isEligibleAnyUnit).length})
+              <span>যোগ্যতা যাচাই ({evaluationResults.filter((r) => r.isEligibleAnyUnit).length})</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('deadlines')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition ${
+              className={`py-2 px-2 sm:px-3 rounded-xl transition font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${
                 activeTab === 'deadlines'
                   ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <Calendar className="w-3.5 h-3.5 text-indigo-500" />
-              ভর্তি ডেডলাইন ২০২৬
+              <span>ভর্তি ডেডলাইন ২০২৬</span>
             </button>
           </div>
         </div>

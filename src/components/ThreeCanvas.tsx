@@ -75,17 +75,17 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({ isDarkMode }) => {
       color: isDarkMode ? 0x6366f1 : 0x4f46e5, // Indigo
       wireframe: true,
       transparent: true,
-      opacity: isDarkMode ? 0.35 : 0.25,
+      opacity: isDarkMode ? 0.20 : 0.12,
     });
     const icosahedronMesh = new THREE.Mesh(icosahedronGeo, wireframeMat);
     mainGroup.add(icosahedronMesh);
 
     // Inner orbiting rings (like atomic structure / engineering sphere)
-    const ringGeo = new THREE.TorusGeometry(38, 0.6, 16, 64);
+    const ringGeo = new THREE.TorusGeometry(38, 0.5, 16, 64);
     const ringMat = new THREE.MeshBasicMaterial({
       color: isDarkMode ? 0x06b6d4 : 0x0284c7, // Cyan / Sky
       transparent: true,
-      opacity: isDarkMode ? 0.45 : 0.3,
+      opacity: isDarkMode ? 0.25 : 0.15,
     });
     const ringMesh1 = new THREE.Mesh(ringGeo, ringMat);
     const ringMesh2 = new THREE.Mesh(ringGeo, ringMat);
