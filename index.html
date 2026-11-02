@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ভার্সিটি এডমিশন এলিজিবিলিটি চেকার - বিশ্ববিদ্যালয় ভর্তি যোগ্যতা যাচাই</title>
+    <meta name="description" content="বুয়েট, চুয়েট-কুয়েট-রুয়েট, ঢাবি, রাবি, জাবি, চবি, জিএসটি গুচ্ছ, কৃষি গুচ্ছ, মেডিকেল, জাতীয় ও প্রাইভেট বিশ্ববিদ্যালয়ের নির্ভুল ভর্তি যোগ্যতা যাচাই।" />
+    <meta property="og:title" content="ভার্সিটি এডমিশন এলিজিবিলিটি চেকার - বিশ্ববিদ্যালয় ভর্তি যোগ্যতা যাচাই" />
+    <meta property="og:description" content="বুয়েট, চুয়েট-কুয়েট-রুয়েট, ঢাবি, রাবি, জাবি, চবি, জিএসটি গুচ্ছ, কৃষি গুচ্ছ, মেডিকেল, জাতীয় ও প্রাইভেট বিশ্ববিদ্যালয়ের নির্ভুল ভর্তি যোগ্যতা যাচাই।" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Bengali & English Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- External scripts as explicitly requested -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+      // Configure tailwindcss script if loaded
+      if (window.tailwind) {
+        window.tailwind.config = {
+          darkMode: 'class',
+          theme: {
+            extend: {
+              fontFamily: {
+                sans: ['"Hind Siliguri"', 'Inter', 'sans-serif'],
+                mono: ['"JetBrains Mono"', 'monospace'],
+              }
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased min-h-screen transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

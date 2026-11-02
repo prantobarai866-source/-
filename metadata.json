@@ -1,0 +1,8 @@
+{
+  "name": "ভার্সিটি এডমিশন এলিজিবিলিটি চেকার (BD University Admission Checker)",
+  "description": "বাংলাদেশের সকল পাবলিক বিশ্ববিদ্যালয়, ইঞ্জিনিয়ারিং গুচ্ছ, মেডিকেল, জিএসটি গুচ্ছ, কৃষি গুচ্ছ, জাতীয় ও প্রাইভেট বিশ্ববিদ্যালয়ের নির্ভুল ভর্তি যোগ্যতা যাচাই ও স্পষ্ট কারণ দর্শানোর প্ল্যাটফর্ম।",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
