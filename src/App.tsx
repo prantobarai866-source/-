@@ -13,21 +13,19 @@ import { ShareModal } from './components/ShareModal';
 import { PrintReport } from './components/PrintReport';
 import { AdmissionGuideModal } from './components/AdmissionGuideModal';
 import { ThreeCanvas } from './components/ThreeCanvas';
-import { UpcomingDeadlines } from './components/UpcomingDeadlines';
+import { AdvertisementBanner } from './components/AdvertisementBanner';
+import { useToast } from './context/ToastContext';
 import {
   GraduationCap,
   Moon,
   Sun,
   Share2,
   Printer,
-  HelpCircle,
   Sparkles,
-  Building,
   CheckCircle2,
-  ShieldCheck,
   SearchX,
-  Calendar,
-  Clock,
+  Bookmark,
+  Check,
 } from 'lucide-react';
 
 const INITIAL_PROFILE: StudentProfile = {
@@ -84,22 +82,64 @@ export default function App() {
   // Search Query
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  // Show only tracked universities filter
+  const [showTrackedOnly, setShowTrackedOnly] = useState<boolean>(false);
+
+  // Tracked universities list with localStorage persistence
+  const [trackedUnivIds, setTrackedUnivIds] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bd_admission_tracked_univs');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
+      }
+    }
+    return [];
+  });
+
+  const { notifyTrackList } = useToast();
+
+  const handleToggleTrack = (universityId: string, universityNameBn: string) => {
+    setTrackedUnivIds((prev) => {
+      const isCurrentlyTracked = prev.includes(universityId);
+      let updated: string[];
+      if (isCurrentlyTracked) {
+        updated = prev.filter((id) => id !== universityId);
+        notifyTrackList(universityNameBn, false);
+      } else {
+        updated = [...prev, universityId];
+        notifyTrackList(universityNameBn, true);
+      }
+      try {
+        localStorage.setItem('bd_admission_tracked_univs', JSON.stringify(updated));
+      } catch (err) {
+        console.error('Failed to save tracked universities:', err);
+      }
+      return updated;
+    });
+  };
+
   // Modals state
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isPrintReportOpen, setIsPrintReportOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
-
-  // Active view tab
-  const [activeTab, setActiveTab] = useState<'all' | 'eligibility' | 'deadlines'>('all');
 
   // Compute evaluation
   const evaluationResults = useMemo(() => {
     return evaluateStudentEligibility(profile);
   }, [profile]);
 
-  // Filter evaluation results by category & search query
+  // Filter evaluation results by category, search query, status & tracked filter
   const filteredResults = useMemo(() => {
     return evaluationResults.filter((item) => {
+      // Tracked filter
+      if (showTrackedOnly && !trackedUnivIds.includes(item.university.id)) {
+        return false;
+      }
+
       // Category filter
       if (activeCategory !== 'all' && item.university.category !== activeCategory) {
         return false;
@@ -135,26 +175,29 @@ export default function App() {
 
       return true;
     });
-  }, [evaluationResults, activeCategory, searchQuery, statusFilter]);
+  }, [evaluationResults, activeCategory, searchQuery, statusFilter, showTrackedOnly, trackedUnivIds]);
 
   const handleReset = () => {
     setProfile(INITIAL_PROFILE);
     setActiveCategory('all');
     setStatusFilter('all');
     setSearchQuery('');
+    setShowTrackedOnly(false);
   };
+
+  const eligibleCount = evaluationResults.filter((r) => r.isEligibleAnyUnit).length;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200 relative">
-      {/* Global University Architectural Ambience Background */}
+      {/* Global University Campus Architectural Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.10] dark:opacity-[0.15] filter saturate-125"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.08] dark:opacity-[0.12] filter saturate-110"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=2400&q=80')`,
+            backgroundImage: `url('/campus_bg.jpg')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/90 via-slate-50/75 to-slate-100/90 dark:from-slate-950/90 dark:via-slate-950/80 dark:to-slate-950/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/95 via-slate-50/85 to-slate-100/95 dark:from-slate-950/95 dark:via-slate-950/85 dark:to-slate-950/98" />
       </div>
 
       {/* Top Floating App Bar */}
@@ -168,7 +211,6 @@ export default function App() {
                 alt="শিক্ষার্থী প্রোফাইল"
                 className="w-full h-full object-cover object-top scale-150 -translate-y-1"
                 onError={(e) => {
-                  // Fallback to graduation cap if cropped source not ideal
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
@@ -183,21 +225,27 @@ export default function App() {
             </div>
           </div>
 
-          {/* Action buttons: Calendar, Print, Share, Theme Toggle */}
+          {/* Action buttons: Tracked, Print, Share, Theme Toggle */}
           <div className="flex items-center gap-2">
-            {/* Deadlines Quick Toggle Button */}
-            <button
-              onClick={() => setActiveTab(activeTab === 'deadlines' ? 'all' : 'deadlines')}
-              type="button"
-              className={`p-2 rounded-xl transition border shadow-xs ${
-                activeTab === 'deadlines'
-                  ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700/80'
-              }`}
-              title="ভর্তি পরীক্ষার সময়সূচী ও ডেডলাইন"
-            >
-              <Calendar className="w-5 h-5" />
-            </button>
+            {/* Tracked Universities Button */}
+            {trackedUnivIds.length > 0 && (
+              <button
+                onClick={() => setShowTrackedOnly(!showTrackedOnly)}
+                type="button"
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition shadow-xs border ${
+                  showTrackedOnly
+                    ? 'bg-amber-500 text-white border-amber-500 shadow-amber-500/20'
+                    : 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 hover:bg-amber-100'
+                }`}
+                title="আমার পছন্দের ভার্সিটি তালিকা ফিল্টার করুন"
+              >
+                <Bookmark className={`w-4 h-4 ${showTrackedOnly ? 'fill-current text-white' : 'text-amber-500 fill-current'}`} />
+                <span className="hidden sm:inline">পছন্দের তালিকা</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${showTrackedOnly ? 'bg-white text-amber-600' : 'bg-amber-500 text-white'}`}>
+                  {trackedUnivIds.length}
+                </span>
+              </button>
+            )}
 
             {/* Print / PDF Button */}
             <button
@@ -239,7 +287,7 @@ export default function App() {
       </header>
 
       {/* Hero Banner with Dhaka University Curzon Hall & Campus Landscape Background */}
-      <section className="relative overflow-hidden pt-8 pb-32 sm:pb-36 border-b border-slate-200/60 dark:border-slate-800/80">
+      <section className="relative overflow-hidden pt-8 pb-28 sm:pb-32 border-b border-slate-200/60 dark:border-slate-800/80">
         {/* Full Colorful University Campus Background (Curzon Hall, Library, Lawn) */}
         <div
           className="absolute inset-0 bg-cover bg-bottom sm:bg-center bg-no-repeat opacity-90 dark:opacity-40 transition-opacity"
@@ -249,7 +297,7 @@ export default function App() {
           aria-hidden="true"
         />
 
-        {/* Soft atmospheric gradient: light & transparent so campus buildings shine through */}
+        {/* Soft atmospheric gradient so campus buildings shine through */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/92 via-white/80 to-transparent dark:from-slate-950/95 dark:via-slate-950/85 dark:to-slate-950/60" />
 
         {/* Bottom lawn fade into page background */}
@@ -273,11 +321,11 @@ export default function App() {
 
             {/* Paragraph Text with Red Highlight */}
             <p className="mt-3 text-xs sm:text-sm md:text-base text-slate-800 dark:text-slate-200 leading-relaxed max-w-2xl mx-auto font-medium">
-              এইচএসসি ২০২৬ সালে যারা পরীক্ষা দিয়েছে/দিচ্ছে তাদের জন্য বুয়েট, ঢাবি, মেডিকেল, গুচ্ছ ও অন্যান্য ভার্সিটির শর্তাবলী। 
-              কোনো ইউনিটে পরীক্ষা দিতে না পারলে তার <span className="text-[#dc2626] dark:text-rose-400 font-bold">সুনির্দিষ্ট কারণ ও নম্বর ঘাটতি</span> লাল রঙে স্পষ্টভাবে প্রদর্শিত হবে।
+              আপনার এসএসসি ও এইচএসসি জিপিএ এবং বিষয়ভিত্তিক গ্রেড দিয়ে জেনে নিন বুয়েট, ঢাবি, মেডিকেল, গুচ্ছ ও অন্যান্য ভার্সিটির যোগ্যতা। 
+              কোনো ইউনিটে পরীক্ষা দিতে না পারলে তার <span className="text-[#dc2626] dark:text-rose-400 font-bold">সুনির্দিষ্ট কারণ ও নম্বর ঘাটতি</span> স্পষ্টভাবে দেখানো হয়েছে।
             </p>
 
-            {/* University Feature Badges Matching Screenshot */}
+            {/* University Feature Badges Matching User Request */}
             <div className="mt-5 flex flex-col items-center gap-2.5 max-w-xl mx-auto">
               {/* Row 1 */}
               <div className="flex flex-wrap items-center justify-center gap-2.5 w-full">
@@ -317,48 +365,7 @@ export default function App() {
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-8 relative z-20 -mt-10 sm:-mt-12">
-        {/* Dashboard Navigation Tabs Matching Screenshot */}
-        <div className="flex items-center justify-center">
-          <div className="w-full max-w-xl p-1.5 rounded-2xl bg-[#e2e8f0]/85 dark:bg-slate-800/85 backdrop-blur-md border border-slate-300/60 dark:border-slate-700/60 grid grid-cols-3 gap-1 shadow-sm text-center">
-            <button
-              type="button"
-              onClick={() => setActiveTab('all')}
-              className={`py-2 px-2 sm:px-3 rounded-xl transition font-bold text-xs sm:text-sm flex flex-col items-center justify-center ${
-                activeTab === 'all'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              সবগুলো ফিচার
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('eligibility')}
-              className={`py-2 px-2 sm:px-3 rounded-xl transition font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${
-                activeTab === 'eligibility'
-                  ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-              <span>যোগ্যতা যাচাই ({evaluationResults.filter((r) => r.isEligibleAnyUnit).length})</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('deadlines')}
-              className={`py-2 px-2 sm:px-3 rounded-xl transition font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${
-                activeTab === 'deadlines'
-                  ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5 text-indigo-500" />
-              <span>ভর্তি ডেডলাইন ২০২৬</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Step 1: Input Form */}
+        {/* Step 1: GPA & Subject Input Form */}
         <section aria-label="Student Information Form">
           <StudentForm
             profile={profile}
@@ -367,77 +374,84 @@ export default function App() {
           />
         </section>
 
-        {/* Upcoming Deadlines Section (Shown when activeTab is 'deadlines' or 'all') */}
-        {(activeTab === 'deadlines' || activeTab === 'all') && (
-          <section aria-label="Upcoming Deadlines Section">
-            <UpcomingDeadlines evaluationResults={evaluationResults} />
-          </section>
-        )}
+        {/* Sponsored Educational Ad Banner */}
+        <section aria-label="বিজ্ঞাপন ব্যানার" className="w-full">
+          <AdvertisementBanner variant="leaderboard" />
+        </section>
 
-        {/* Step 2 & 3: Eligibility Analytics & University Cards (Shown when activeTab is 'eligibility' or 'all') */}
-        {(activeTab === 'eligibility' || activeTab === 'all') && (
-          <>
-            {/* Step 2: Evaluation Analytics & Category Controls */}
-            <section aria-label="Eligibility Summary & Filter Controls">
-              <ResultsSummary
-                results={evaluationResults}
-                activeCategory={activeCategory}
-                onCategoryChange={(cat) => setActiveCategory(cat)}
-                statusFilter={statusFilter}
-                onStatusFilterChange={(st) => setStatusFilter(st)}
-                searchQuery={searchQuery}
-                onSearchChange={(q) => setSearchQuery(q)}
-              />
-            </section>
+        {/* Step 2: Evaluation Analytics & Category Controls */}
+        <section aria-label="Eligibility Summary & Filter Controls">
+          <ResultsSummary
+            results={evaluationResults}
+            activeCategory={activeCategory}
+            onCategoryChange={(cat) => setActiveCategory(cat)}
+            statusFilter={statusFilter}
+            onStatusFilterChange={(st) => setStatusFilter(st)}
+            searchQuery={searchQuery}
+            onSearchChange={(q) => setSearchQuery(q)}
+          />
+        </section>
 
-            {/* Step 3: University Evaluation Cards Grid */}
-            <section aria-label="Universities Evaluation List" className="space-y-4">
-              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1">
-                <span>
-                  প্রদর্শিত হচ্ছে: <strong className="text-slate-800 dark:text-white">{filteredResults.length}</strong>টি বিশ্ববিদ্যালয়ের মূল্যায়ন
+        {/* In-feed Educational Partner Ad Banner */}
+        <AdvertisementBanner variant="compact" />
+
+        {/* Step 3: University Evaluation Cards Grid */}
+        <section aria-label="Universities Evaluation List" className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1 gap-2">
+            <div className="flex items-center gap-2">
+              <span>
+                প্রদর্শিত হচ্ছে: <strong className="text-slate-800 dark:text-white font-mono">{filteredResults.length}</strong>টি বিশ্ববিদ্যালয়ের মূল্যায়ন
+              </span>
+              {showTrackedOnly && (
+                <span className="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-semibold border border-amber-300 dark:border-amber-800">
+                  ★ শুধুমাত্র পছন্দের তালিকা
                 </span>
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="text-indigo-600 dark:text-indigo-400 hover:underline"
-                  >
-                    ফিল্টার মুছুন
-                  </button>
-                )}
-              </div>
-
-              {filteredResults.length === 0 ? (
-                <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-200 dark:border-slate-800">
-                  <SearchX className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                  <h4 className="text-base font-bold text-slate-800 dark:text-white">
-                    কোনো ফলাফল পাওয়া যায়নি
-                  </h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
-                    আপনার প্রদত্ত অনুসন্ধান বা ফিল্টারের সাথে মিলে এমন কোনো বিশ্ববিদ্যালয় বা ইউনিট খুঁজে পাওয়া যায়নি। ক্যাটাগরি বা সার্চ কিওয়ার্ড পরিবর্তন করুন।
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleReset}
-                    className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-500 transition"
-                  >
-                    সব ফিল্টার রিসেট করুন
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-4">
-                  {filteredResults.map((evalResult) => (
-                    <UniversityCard
-                      key={evalResult.university.id}
-                      evaluation={evalResult}
-                      statusFilter={statusFilter}
-                    />
-                  ))}
-                </div>
               )}
-            </section>
-          </>
-        )}
+            </div>
+            {(searchQuery || showTrackedOnly || activeCategory !== 'all' || statusFilter !== 'all') && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold self-start sm:self-auto"
+              >
+                সব ফিল্টার রিসেট করুন
+              </button>
+            )}
+          </div>
+
+          {filteredResults.length === 0 ? (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-200 dark:border-slate-800">
+              <SearchX className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+              <h4 className="text-base font-bold text-slate-800 dark:text-white">
+                কোনো ফলাফল পাওয়া যায়নি
+              </h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+                {showTrackedOnly
+                  ? 'আপনার পছন্দের তালিকায় এখনো কোনো বিশ্ববিদ্যালয় যুক্ত করেননি। নিচে যেকোনো বিশ্ববিদ্যালয়ের কার্ডে "ট্র্যাক" বাটনে ক্লিক করে তালিকায় যোগ করুন।'
+                  : 'আপনার প্রদত্ত অনুসন্ধান বা ফিল্টারের সাথে মিলে এমন কোনো বিশ্ববিদ্যালয় বা ইউনিট খুঁজে পাওয়া যায়নি। ক্যাটাগরি বা সার্চ কিওয়ার্ড পরিবর্তন করুন।'}
+              </p>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-500 transition"
+              >
+                সব ফিল্টার রিসেট করুন
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {filteredResults.map((evalResult) => (
+                <UniversityCard
+                  key={evalResult.university.id}
+                  evaluation={evalResult}
+                  statusFilter={statusFilter}
+                  isTracked={trackedUnivIds.includes(evalResult.university.id)}
+                  onToggleTrack={handleToggleTrack}
+                />
+              ))}
+            </div>
+          )}
+        </section>
       </main>
 
       {/* Footer */}
@@ -452,7 +466,7 @@ export default function App() {
                 ভার্সিটি এডমিশন এলিজিবিলিটি চেকার (BD University Admission Eligibility Engine)
               </p>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                বাংলাদেশ শিক্ষা মন্ত্রণালয় ও পাবলিক বিশ্ববিদ্যালয়গুলোর সর্বশেষ অফিশিয়াল ভর্তি নির্দেশিকা ভিত্তিক
+                বাংলাদেশ শিক্ষা মন্ত্রণালয় ও পাবলিক বিশ্ববিদ্যালয়গুলোর সর্বশেষ অফিশিয়াল ভর্তি নির্দেশিকা ভিত্তিক
               </p>
             </div>
           </div>

@@ -12,14 +12,22 @@ import {
   Check,
   Flame,
   Users,
+  Bookmark,
 } from 'lucide-react';
 
 interface UniversityCardProps {
   evaluation: UniversityEvaluationResult;
   statusFilter: 'all' | 'eligible' | 'ineligible';
+  isTracked?: boolean;
+  onToggleTrack?: (universityId: string, universityNameBn: string) => void;
 }
 
-export const UniversityCard: React.FC<UniversityCardProps> = ({ evaluation, statusFilter }) => {
+export const UniversityCard: React.FC<UniversityCardProps> = ({
+  evaluation,
+  statusFilter,
+  isTracked = false,
+  onToggleTrack,
+}) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const { university, unitsResult, isEligibleAnyUnit, eligibleUnitCount, totalUnitCount } =
     evaluation;
@@ -108,6 +116,21 @@ export const UniversityCard: React.FC<UniversityCardProps> = ({ evaluation, stat
               )}
             </div>
 
+            {/* Track / Bookmark Button */}
+            <button
+              type="button"
+              onClick={() => onToggleTrack?.(university.id, university.nameBn)}
+              className={`p-2 rounded-xl transition border shadow-xs flex items-center gap-1 text-xs font-bold ${
+                isTracked
+                  ? 'bg-amber-500 text-white border-amber-500 shadow-amber-500/20'
+                  : 'bg-white dark:bg-slate-800 text-slate-500 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/30 border-slate-200 dark:border-slate-700'
+              }`}
+              title={isTracked ? 'ট্র্যাক লিস্ট থেকে বাদ দিন' : 'ট্র্যাক লিস্টে যোগ করুন'}
+            >
+              <Bookmark className={`w-4 h-4 ${isTracked ? 'fill-current text-white' : 'text-slate-400'}`} />
+              <span className="hidden md:inline">{isTracked ? 'ট্র্যাকড' : 'ট্র্যাক'}</span>
+            </button>
+
             {/* Official Website / Circular Link */}
             {university.admissionCircularUrl && (
               <a
@@ -115,7 +138,7 @@ export const UniversityCard: React.FC<UniversityCardProps> = ({ evaluation, stat
                 target="_blank"
                 rel="noopener noreferrer"
                 title="অফিসিয়াল ভর্তি ওয়েবসাইট"
-                className="p-2 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="p-2 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition"
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
